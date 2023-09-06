@@ -1,0 +1,27 @@
+server:
+  port: ${PALETTE_SERVER_PORT}
+  servlet:
+    encoding:
+      charset: utf-8
+      force: true
+
+spring:
+  datasource:
+    url: ${PALETTE_SERVER_DB_URL}
+    driver-class-name: ${PALETTE_SERVER_DB_DRIVER}
+    username: ${PALETTE_SERVER_DB_USER}
+    password: ${PALETTE_SERVER_DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+      default_batch_fetch_size: 100
+    open-in-view: false
+
+  servlet:
+    multipart:
+      max-file-size: 5MB
