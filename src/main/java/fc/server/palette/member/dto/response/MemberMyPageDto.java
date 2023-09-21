@@ -27,11 +27,9 @@ public class MemberMyPageDto {
 
     private String roomNumber;
 
+    private long followedCount;
 
-
-//    private int followerCount;
-//
-//    private int followedCount;
+    private long followingCount;
 
 
 }
