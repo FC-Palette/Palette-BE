@@ -17,6 +17,12 @@ public class MemberController {
 
     private final MemberService memberService;
 
+
+    @GetMapping("/mypage/{memberId}")
+    public ResponseEntity<?> mypage (@PathVariable Long memberId){
+        return ResponseEntity.ok(memberService.myPageInfo(memberId));
+    }
+
     @PostMapping("/mypage/{memberId}")
     public ResponseEntity<?> updateProfile (
             @AuthenticationPrincipal CustomUserDetails userDetails,
