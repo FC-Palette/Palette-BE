@@ -1,7 +1,7 @@
 package fc.server.palette.member.entity.type;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import fc.server.palette.meeting.entity.type.Week;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -36,4 +36,15 @@ public enum Job {
         }
         return jobs;
     }
+
+    @JsonCreator
+    public static Job fromOneValue(String value) {
+        for (Job job : Job.values()) {
+            if (job.getValue().equals(value)) {
+                return job;
+            }
+        }
+        throw new IllegalArgumentException("Invalid job: " + value);
+    }
+
 }

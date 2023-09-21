@@ -31,4 +31,14 @@ public enum Position {
         }
         return positions;
     }
+
+    @JsonCreator
+    public static Position fromOneValue(String value) {
+        for (Position position : Position.values()) {
+            if (position.getValue().equals(value)) {
+                return position;
+            }
+        }
+        throw new IllegalArgumentException("Invalid position: " + value);
+    }
 }
