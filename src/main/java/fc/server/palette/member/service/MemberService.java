@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -73,14 +74,76 @@ public class MemberService {
 
     }
 
+
+
+
     // 팔로워 수 조회
     public long getFollowedCount(Long memberId) {
-        return followRepository.countByFollowed_Id(memberId);
+        return followRepository.countByFollowedId(memberId);
     }
 
     // 팔로우 수 조회
     public long getFollowingCount(Long memberId) {
-        return followRepository.countByFollowing_Id(memberId);
+        return followRepository.countByFollowingId(memberId);
+    }
+
+
+    //팔로우하는 메서드
+    public void follow(Long followedId, Long followingId) {
+        Optional<Follow> existingFollow = followRepository.findByFollowedIdAndFollowingId(followedId, followingId);
+        if (existingFollow.isEmpty()) {
+            Follow follow = Follow.builder()
+                    .followed(memberRepository.getById(followedId))
+                    .following(memberRepository.getReferenceById(followingId))
+                    .build();
+            followRepository.save(follow);
+        }
+    }
+
+    //언팔로우 메서드
+    public void unfollow(Long followedId, Long followingId) {
+        Optional<Follow> existingFollow = followRepository.findByFollowedIdAndFollowingId(followedId, followingId);
+        existingFollow.ifPresent(follow ->  {
+            followRepository.deleteByFollowedIdAndFollowingId(followedId, followingId);
+        });
+    }
+
+    //팔로워 회원 목록 조회
+    public List<FollowInfoDto> getFollowed(Long memberId) {
+        List<Follow> followerList = followRepository.findByFollowedId(memberId);
+        List<FollowInfoDto> followerInfoList = new ArrayList<>();
+
+        for (Follow follow : followerList) {
+            Member follower = follow.getFollowing();
+            FollowInfoDto dto = followInfo(follower);
+            followerInfoList.add(dto);
+        }
+
+        return followerInfoList;
+    }
+
+    // 팔로잉 리스트 조회 메서드
+    public List<FollowInfoDto> getFollowings(Long memberId) {
+        List<Follow> followingList = followRepository.findByFollowingId(memberId);
+        List<FollowInfoDto> followingInfoList = new ArrayList<>();
+
+        for (Follow follow : followingList) {
+            Member following = follow.getFollowed();
+            FollowInfoDto dto = followInfo(following);
+            followingInfoList.add(dto);
+        }
+
+        return followingInfoList;
+    }
+
+
+
+    public FollowInfoDto followInfo(Member member){
+        return new FollowInfoDto().builder()
+                .image(member.getImage())
+                .nickname(member.getNickname())
+                .bio(member.getBio())
+                .build();
     }
 
 
