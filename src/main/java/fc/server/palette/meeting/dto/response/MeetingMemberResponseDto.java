@@ -8,6 +8,7 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class MeetingMemberResponseDto {
+    private Long id;
     private String nickname;
     private String bio;
     private String image;

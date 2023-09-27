@@ -1,7 +1,6 @@
 package fc.server.palette.meeting.service;
 
 import fc.server.palette._common.exception.Exception400;
-import fc.server.palette._common.exception.Exception403;
 import fc.server.palette._common.exception.message.ExceptionMessage;
 import fc.server.palette.meeting.dto.request.ApplicationRequestDto;
 import fc.server.palette.meeting.dto.request.MeetingCreateRequestDto;
@@ -24,14 +23,12 @@ import fc.server.palette.member.entity.type.Job;
 import fc.server.palette.member.entity.type.Position;
 import fc.server.palette.member.entity.type.Sex;
 import fc.server.palette.member.repository.MemberRepository;
-import fc.server.palette.purchase.entity.Purchase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -200,6 +197,7 @@ public class MeetingService {
         Meeting meeting = getMeeting(meetingId);
         meeting.setHits(); //조회수 증가
         MeetingMemberResponseDto responseMember = MeetingMemberResponseDto.builder()
+                .id(meeting.getMember().getId())
                 .nickname(meeting.getMember().getNickname())
                 .bio(meeting.getMember().getBio())
                 .image(meeting.getMember().getImage())
