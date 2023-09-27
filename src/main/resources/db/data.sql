@@ -136,7 +136,6 @@ VALUES
     (4, 'CAREER', 'AMITY', 'IRRELEVANT', '제목', '성장해요', 20, '2023-10-09', '2023-10-15', false, '장소', 'EVERY_WEEK', '3:00 PM', '150', 'APPROVAL', true, 0, 0, 0, now()),
     (4, 'CAREER', 'STUDY', 'IRRELEVANT', '제목', '성장해요', 20, '2023-10-10', '2023-10-15', false, '장소', 'EVERY_WEEK', '3:00 PM', '150', 'APPROVAL', true, 0, 0, 0, now());
 
-
 insert Into meeting_job (meeting_id, job)
 values
     (1, 'BUSINESS'), (1, 'SERVICE'), (1, 'DEVELOPMENT'),
