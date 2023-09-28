@@ -12,6 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -46,7 +47,7 @@ public class MeetingController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestPart(value = "dto") MeetingCreateRequestDto meetingCreateRequestDto,
             @RequestPart(value = "file", required = false)List<MultipartFile> images
-    ){
+    ) throws IOException {
         meetingService.createMeeting(meetingCreateRequestDto, userDetails.getMember(), images);
         return ResponseEntity.ok("모임을 개설하였습니다.");
     }
