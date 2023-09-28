@@ -58,7 +58,7 @@ public class MeetingController {
             @PathVariable Long meetingId,
             @RequestPart(value = "dto") MeetingUpdateRequestDto meetingUpdateRequestDto,
             @RequestPart(value = "file", required = false)List<MultipartFile> images
-    ){
+    ) throws IOException {
         userDetails.validateAuthority(meetingService.getMeeting(meetingId).getMember().getId());
         meetingService.updateMeeting(meetingId, meetingUpdateRequestDto, images);
         return ResponseEntity.ok("업데이트 완료");
