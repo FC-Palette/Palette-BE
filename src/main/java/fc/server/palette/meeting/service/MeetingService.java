@@ -3,6 +3,8 @@ package fc.server.palette.meeting.service;
 import fc.server.palette._common.exception.Exception400;
 import fc.server.palette._common.exception.Exception403;
 import fc.server.palette._common.exception.message.ExceptionMessage;
+import fc.server.palette._common.s3.S3DirectoryNames;
+import fc.server.palette._common.s3.S3ImageUploader;
 import fc.server.palette.meeting.dto.request.ApplicationRequestDto;
 import fc.server.palette.meeting.dto.request.MeetingCreateRequestDto;
 import fc.server.palette.meeting.dto.request.MeetingUpdateRequestDto;
@@ -30,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -45,7 +48,7 @@ public class MeetingService {
     private final BookmarkRepository bookmarkRepository;
     private final MediaRepository mediaRepository;
     private final ApplicationRepository applicationRepository;
-    private final MeetingMediaService meetingMediaService;
+    private final S3ImageUploader s3ImageUploader;
 
     public List<MeetingListResponseDto> getMeetingList(Boolean isClose){
         List<Meeting> meetings = meetingRepository.findAll();
@@ -117,15 +120,14 @@ public class MeetingService {
         return meetingListResponseDtoList;
     }
 
-    public void createMeeting(MeetingCreateRequestDto meetingCreateRequestDto, Member member, List<MultipartFile> images) {
+    public void createMeeting(MeetingCreateRequestDto meetingCreateRequestDto, Member member, List<MultipartFile> images) throws IOException {
         List<Media> mediaList = new ArrayList<>();
         List<String> urlList = new ArrayList<>();
         boolean isImageEmpty = images.stream().anyMatch(MultipartFile::isEmpty);
 
         if (!isImageEmpty) {
-            for(MultipartFile image : images){
-                String imageUrl = meetingMediaService.uploadImage(image);
-                urlList.add(imageUrl);
+            urlList = s3ImageUploader.save(S3DirectoryNames.MEETING, images);
+            for(String imageUrl : urlList){
                 Media media = Media.builder()
                         .url(imageUrl)
                         .build();
@@ -172,18 +174,19 @@ public class MeetingService {
         meetingRepository.deleteById(meetingId);
     }
 
-    public void updateMeeting(Long meetingId, MeetingUpdateRequestDto meetingUpdateRequestDto, List<MultipartFile> images) {
+    public void updateMeeting(Long meetingId, MeetingUpdateRequestDto meetingUpdateRequestDto, List<MultipartFile> images) throws IOException {
         Meeting meeting = getMeeting(meetingId);
 
         List<Media> existingMedia = meeting.getImage();
         existingMedia.stream().forEach(mediaRepository::delete);
 
         List<Media> mediaList = new ArrayList<>();
+        List<String> urlList = new ArrayList<>();
         boolean isImageEmpty = images.stream().anyMatch(MultipartFile::isEmpty);
 
         if (!isImageEmpty) {
-            for(MultipartFile image : images){
-                String imageUrl = meetingMediaService.uploadImage(image);
+            urlList = s3ImageUploader.save(S3DirectoryNames.MEETING, images);
+            for(String imageUrl : urlList){
                 Media media = Media.builder()
                         .url(imageUrl)
                         .meeting(meeting)
