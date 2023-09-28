@@ -1,8 +1,7 @@
 package fc.server.palette.meeting.entity;
 
 import fc.server.palette._common.auditing.BaseEntity;
-import fc.server.palette.meeting.dto.request.MeetingCreateRequestDto;
-import fc.server.palette.meeting.dto.request.MeetingUpdateRequestDto;
+import fc.server.palette.meeting.dto.request.MeetingUpdateDto;
 import fc.server.palette.meeting.entity.type.*;
 import fc.server.palette.member.entity.Member;
 import fc.server.palette.member.entity.type.Job;
@@ -119,20 +118,20 @@ public class Meeting extends BaseEntity {
     @Column(nullable = false)
     private Integer likes = 0;
 
-    public void update(MeetingUpdateRequestDto meetingUpdateRequestDto, List<Media> image){
+    public void update(MeetingUpdateDto meetingUpdateDto, List<Media> image){
         this.image = image;
-        this.title = meetingUpdateRequestDto.getTitle();
-        this.description = meetingUpdateRequestDto.getDescription();
-        this.headCount = meetingUpdateRequestDto.getHeadCount();
-        this.startDate = meetingUpdateRequestDto.getStartDate();
-        this.endDate = meetingUpdateRequestDto.getEndDate();
-        this.onOff = meetingUpdateRequestDto.isOnOff();
-        this.place = meetingUpdateRequestDto.getPlace();
-        this.week = Week.fromValue(meetingUpdateRequestDto.getWeek());
-        this.days = Day.fromValue(meetingUpdateRequestDto.getDays());
-        this.time = meetingUpdateRequestDto.getTime();
-        this.progressTime = meetingUpdateRequestDto.getProgressTime();
-        this.acceptType = AcceptType.fromValue(meetingUpdateRequestDto.getAcceptType());
+        this.title = meetingUpdateDto.getTitle();
+        this.description = meetingUpdateDto.getDescription();
+        this.headCount = meetingUpdateDto.getHeadCount();
+        this.startDate = meetingUpdateDto.getStartDate();
+        this.endDate = meetingUpdateDto.getEndDate();
+        this.onOff = meetingUpdateDto.isOnOff();
+        this.place = meetingUpdateDto.getPlace();
+        this.week = Week.fromValue(meetingUpdateDto.getWeek());
+        this.days = Day.fromValue(meetingUpdateDto.getDays());
+        this.time = meetingUpdateDto.getTime();
+        this.progressTime = meetingUpdateDto.getProgressTime();
+        this.acceptType = AcceptType.fromValue(meetingUpdateDto.getAcceptType());
     }
 
     public void setHits(){

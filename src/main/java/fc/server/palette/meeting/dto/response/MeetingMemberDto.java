@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class MeetingMemberResponseDto {
+public class MeetingMemberDto {
     private String nickname;
     private String bio;
     private String image;

@@ -1,9 +1,9 @@
 package fc.server.palette.meeting.controller;
 
-import fc.server.palette.meeting.dto.request.ApplicationRequestDto;
-import fc.server.palette.meeting.dto.request.MeetingCreateRequestDto;
-import fc.server.palette.meeting.dto.request.MeetingUpdateRequestDto;
-import fc.server.palette.meeting.dto.response.MeetingListResponseDto;
+import fc.server.palette.meeting.dto.request.ApplicationDto;
+import fc.server.palette.meeting.dto.request.MeetingCreateDto;
+import fc.server.palette.meeting.dto.request.MeetingUpdateDto;
+import fc.server.palette.meeting.dto.response.MeetingListDto;
 import fc.server.palette.meeting.service.MeetingService;
 import fc.server.palette.member.auth.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class MeetingController {
 
     @GetMapping("")
     public ResponseEntity<?> getMeetingList(@RequestParam Boolean isClose){
-        List<MeetingListResponseDto> meetingResponseDtoList;
+        List<MeetingListDto> meetingResponseDtoList;
         meetingResponseDtoList = meetingService.getMeetingList(isClose);
         return ResponseEntity.ok(meetingResponseDtoList);
     }
@@ -38,17 +38,17 @@ public class MeetingController {
             @RequestParam String position,
             @RequestParam String sex
     ){
-        List<MeetingListResponseDto> meetingListResponseDtoList = meetingService.getMeetingFilterList(isClose, filter, onOff, type, job, position, sex);
+        List<MeetingListDto> meetingListResponseDtoList = meetingService.getMeetingFilterList(isClose, filter, onOff, type, job, position, sex);
         return ResponseEntity.ok(meetingListResponseDtoList);
     }
 
     @PostMapping("/create")
     public ResponseEntity<?> createMeeting(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestPart(value = "dto") MeetingCreateRequestDto meetingCreateRequestDto,
+            @RequestPart(value = "dto") MeetingCreateDto meetingCreateDto,
             @RequestPart(value = "file", required = false)List<MultipartFile> images
     ) throws IOException {
-        meetingService.createMeeting(meetingCreateRequestDto, userDetails.getMember(), images);
+        meetingService.createMeeting(meetingCreateDto, userDetails.getMember(), images);
         return ResponseEntity.ok("모임을 개설하였습니다.");
     }
 
@@ -56,11 +56,11 @@ public class MeetingController {
     public ResponseEntity<?> updateMeeting(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable Long meetingId,
-            @RequestPart(value = "dto") MeetingUpdateRequestDto meetingUpdateRequestDto,
+            @RequestPart(value = "dto") MeetingUpdateDto meetingUpdateDto,
             @RequestPart(value = "file", required = false)List<MultipartFile> images
     ) throws IOException {
         userDetails.validateAuthority(meetingService.getMeeting(meetingId).getMember().getId());
-        meetingService.updateMeeting(meetingId, meetingUpdateRequestDto, images);
+        meetingService.updateMeeting(meetingId, meetingUpdateDto, images);
         return ResponseEntity.ok("업데이트 완료");
 
     }
@@ -147,9 +147,9 @@ public class MeetingController {
     public ResponseEntity<?> participateMeeting(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable Long meetingId,
-            @RequestBody ApplicationRequestDto applicationRequestDto
+            @RequestBody ApplicationDto applicationDto
     ){
-        meetingService.participateMeeting(meetingId, userDetails.getMember(), applicationRequestDto);
+        meetingService.participateMeeting(meetingId, userDetails.getMember(), applicationDto);
         return ResponseEntity.ok("모임 신청이 완료되었습니다");
     }
 

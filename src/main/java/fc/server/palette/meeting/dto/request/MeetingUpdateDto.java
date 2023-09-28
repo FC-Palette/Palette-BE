@@ -1,7 +1,5 @@
 package fc.server.palette.meeting.dto.request;
 
-import com.fasterxml.jackson.annotation.*;
-import fc.server.palette.member.entity.Member;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.util.Date;
@@ -9,15 +7,7 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-public class MeetingCreateRequestDto {
-    @JsonIgnoreProperties({"hibernateLazyInitializer"})
-    private Member member;
-    private Long id;
-    private String category;
-    private String type;
-    private List<String> jobs;
-    private List<String> positions;
-    private String sex;
+public class MeetingUpdateDto {
     private String title;
     private String description;
     private int headCount;

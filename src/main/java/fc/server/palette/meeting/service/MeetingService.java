@@ -1,17 +1,16 @@
 package fc.server.palette.meeting.service;
 
 import fc.server.palette._common.exception.Exception400;
-import fc.server.palette._common.exception.Exception403;
 import fc.server.palette._common.exception.message.ExceptionMessage;
 import fc.server.palette._common.s3.S3DirectoryNames;
 import fc.server.palette._common.s3.S3ImageUploader;
-import fc.server.palette.meeting.dto.request.ApplicationRequestDto;
-import fc.server.palette.meeting.dto.request.MeetingCreateRequestDto;
-import fc.server.palette.meeting.dto.request.MeetingUpdateRequestDto;
-import fc.server.palette.meeting.dto.response.MeetingDetailResponseDto;
-import fc.server.palette.meeting.dto.response.MeetingListResponseDto;
-import fc.server.palette.meeting.dto.response.MeetingMemberResponseDto;
-import fc.server.palette.meeting.dto.response.WaitingParticipateMemberResponseDto;
+import fc.server.palette.meeting.dto.request.ApplicationDto;
+import fc.server.palette.meeting.dto.request.MeetingCreateDto;
+import fc.server.palette.meeting.dto.request.MeetingUpdateDto;
+import fc.server.palette.meeting.dto.response.MeetingDetailDto;
+import fc.server.palette.meeting.dto.response.MeetingListDto;
+import fc.server.palette.meeting.dto.response.MeetingMemberDto;
+import fc.server.palette.meeting.dto.response.WaitingParticipateMemberDto;
 import fc.server.palette.meeting.entity.Application;
 import fc.server.palette.meeting.entity.Bookmark;
 import fc.server.palette.meeting.entity.Media;
@@ -26,7 +25,6 @@ import fc.server.palette.member.entity.type.Job;
 import fc.server.palette.member.entity.type.Position;
 import fc.server.palette.member.entity.type.Sex;
 import fc.server.palette.member.repository.MemberRepository;
-import fc.server.palette.purchase.entity.Purchase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +32,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,31 +47,31 @@ public class MeetingService {
     private final ApplicationRepository applicationRepository;
     private final S3ImageUploader s3ImageUploader;
 
-    public List<MeetingListResponseDto> getMeetingList(Boolean isClose){
+    public List<MeetingListDto> getMeetingList(Boolean isClose){
         List<Meeting> meetings = meetingRepository.findAll();
-        List<MeetingListResponseDto> meetingResponseDtoList = new ArrayList<>();
+        List<MeetingListDto> meetingResponseDtoList = new ArrayList<>();
         if (isClose) {
             for (Meeting meeting : meetings) {
                 if (!meeting.isClosing()) {
-                    MeetingListResponseDto meetingResponseDto = meetingListResponseDtoBuilder(meeting);
+                    MeetingListDto meetingResponseDto = meetingListResponseDtoBuilder(meeting);
                     meetingResponseDtoList.add(meetingResponseDto);
                 }
             }
         }
         else {
             for (Meeting meeting : meetings){
-                MeetingListResponseDto meetingResponseDto = meetingListResponseDtoBuilder(meeting);
+                MeetingListDto meetingResponseDto = meetingListResponseDtoBuilder(meeting);
                 meetingResponseDtoList.add(meetingResponseDto);
             }
         }
         return meetingResponseDtoList;
     }
 
-    public List<MeetingListResponseDto> getMeetingFilterList(
+    public List<MeetingListDto> getMeetingFilterList(
             Boolean isClose, String filter, String onOff, String type,
             List<String> job, String position, String sex) {
         List<Meeting> meetings = meetingRepository.findAll();
-        List<MeetingListResponseDto> meetingListResponseDtoList = new ArrayList<>();
+        List<MeetingListDto> meetingListResponseDtoList = new ArrayList<>();
 
         if (isClose) {
             meetings = meetings.stream().filter(meeting -> !meeting.isClosing()).collect(Collectors.toList());
@@ -114,13 +111,13 @@ public class MeetingService {
         }
 
         meetingListResponseDtoList = meetings.stream().map(meeting -> {
-            MeetingListResponseDto meetingListResponseDto = meetingListResponseDtoBuilder(meeting);
-            return meetingListResponseDto;
+            MeetingListDto meetingListDto = meetingListResponseDtoBuilder(meeting);
+            return meetingListDto;
         }).collect(Collectors.toList());
         return meetingListResponseDtoList;
     }
 
-    public void createMeeting(MeetingCreateRequestDto meetingCreateRequestDto, Member member, List<MultipartFile> images) throws IOException {
+    public void createMeeting(MeetingCreateDto meetingCreateDto, Member member, List<MultipartFile> images) throws IOException {
         List<Media> mediaList = new ArrayList<>();
         List<String> urlList = new ArrayList<>();
         boolean isImageEmpty = images.stream().anyMatch(MultipartFile::isEmpty);
@@ -137,24 +134,24 @@ public class MeetingService {
 
         Meeting meeting = Meeting.builder()
                 .member(member)
-                .category(Category.fromValue(meetingCreateRequestDto.getCategory()))
-                .type(Type.fromValue(meetingCreateRequestDto.getType()))
-                .job(Job.fromValue(meetingCreateRequestDto.getJobs()))
-                .position(Position.fromValue(meetingCreateRequestDto.getPositions()))
-                .sex(Sex.fromValue(meetingCreateRequestDto.getSex()))
+                .category(Category.fromValue(meetingCreateDto.getCategory()))
+                .type(Type.fromValue(meetingCreateDto.getType()))
+                .job(Job.fromValue(meetingCreateDto.getJobs()))
+                .position(Position.fromValue(meetingCreateDto.getPositions()))
+                .sex(Sex.fromValue(meetingCreateDto.getSex()))
                 .image(mediaList)
-                .title(meetingCreateRequestDto.getTitle())
-                .description(meetingCreateRequestDto.getDescription())
-                .headCount(meetingCreateRequestDto.getHeadCount())
-                .startDate(meetingCreateRequestDto.getStartDate())
-                .endDate(meetingCreateRequestDto.getEndDate())
-                .onOff(meetingCreateRequestDto.isOnOff())
-                .place(meetingCreateRequestDto.getPlace())
-                .week(Week.fromValue(meetingCreateRequestDto.getWeek()))
-                .days(Day.fromValue(meetingCreateRequestDto.getDays()))
-                .time(meetingCreateRequestDto.getTime())
-                .progressTime(meetingCreateRequestDto.getProgressTime())
-                .acceptType(AcceptType.fromValue(meetingCreateRequestDto.getAcceptType()))
+                .title(meetingCreateDto.getTitle())
+                .description(meetingCreateDto.getDescription())
+                .headCount(meetingCreateDto.getHeadCount())
+                .startDate(meetingCreateDto.getStartDate())
+                .endDate(meetingCreateDto.getEndDate())
+                .onOff(meetingCreateDto.isOnOff())
+                .place(meetingCreateDto.getPlace())
+                .week(Week.fromValue(meetingCreateDto.getWeek()))
+                .days(Day.fromValue(meetingCreateDto.getDays()))
+                .time(meetingCreateDto.getTime())
+                .progressTime(meetingCreateDto.getProgressTime())
+                .acceptType(AcceptType.fromValue(meetingCreateDto.getAcceptType()))
                 .build();
 
         Meeting saveMeeting = meetingRepository.save(meeting);
@@ -174,7 +171,7 @@ public class MeetingService {
         meetingRepository.deleteById(meetingId);
     }
 
-    public void updateMeeting(Long meetingId, MeetingUpdateRequestDto meetingUpdateRequestDto, List<MultipartFile> images) throws IOException {
+    public void updateMeeting(Long meetingId, MeetingUpdateDto meetingUpdateDto, List<MultipartFile> images) throws IOException {
         Meeting meeting = getMeeting(meetingId);
 
         List<Media> existingMedia = meeting.getImage();
@@ -195,20 +192,20 @@ public class MeetingService {
                 mediaRepository.save(media);
             }
         }
-        meeting.update(meetingUpdateRequestDto, mediaList);
+        meeting.update(meetingUpdateDto, mediaList);
 
     }
 
-    public MeetingDetailResponseDto getDetailMeeting(Long meetingId) {
+    public MeetingDetailDto getDetailMeeting(Long meetingId) {
         Meeting meeting = getMeeting(meetingId);
         meeting.setHits(); //조회수 증가
-        MeetingMemberResponseDto responseMember = MeetingMemberResponseDto.builder()
+        MeetingMemberDto responseMember = MeetingMemberDto.builder()
                 .nickname(meeting.getMember().getNickname())
                 .bio(meeting.getMember().getBio())
                 .image(meeting.getMember().getImage())
                 .build();
-        return MeetingDetailResponseDto.builder()
-                .meetingMemberResponseDto(responseMember)
+        return MeetingDetailDto.builder()
+                .meetingMemberDto(responseMember)
                 .id(meeting.getId())
                 .category(meeting.getCategory().getDescription())
                 .type(meeting.getType().getDescription())
@@ -242,8 +239,8 @@ public class MeetingService {
                 .build();
     }
 
-    public MeetingListResponseDto meetingListResponseDtoBuilder(Meeting meeting){
-         return MeetingListResponseDto.builder()
+    public MeetingListDto meetingListResponseDtoBuilder(Meeting meeting){
+         return MeetingListDto.builder()
                 .id(meeting.getId())
                 .category(meeting.getCategory().getDescription())
                 .type(meeting.getType().getDescription())
@@ -311,7 +308,7 @@ public class MeetingService {
         meeting.reopen();
     }
 
-    public List<MeetingListResponseDto> recommendMeeting(Long loginMemberId, Long meetingId) {
+    public List<MeetingListDto> recommendMeeting(Long loginMemberId, Long meetingId) {
         Meeting baseMeeting = getMeeting(meetingId);
         List<Meeting> recommededMeeting = new ArrayList<>();
 
@@ -373,12 +370,12 @@ public class MeetingService {
                 && meeting.getSex().equals(member.getSex()));
     }
 
-    public List<MeetingMemberResponseDto> participateMemberList(Long meetingId) {
+    public List<MeetingMemberDto> participateMemberList(Long meetingId) {
         Meeting meeting = getMeeting(meetingId);
         List<Application> applications = applicationRepository.findByMeetingAndStatus(meeting, Status.APPROVAL);
 
-        List<MeetingMemberResponseDto> approvedMembers = applications.stream()
-                .map(application -> MeetingMemberResponseDto.builder()
+        List<MeetingMemberDto> approvedMembers = applications.stream()
+                .map(application -> MeetingMemberDto.builder()
                         .nickname(application.getMember().getNickname())
                         .bio(application.getMember().getBio())
                         .image(application.getMember().getImage())
@@ -387,23 +384,23 @@ public class MeetingService {
         return approvedMembers;
     }
 
-    public void participateMeeting(Long meetingId, Member member, ApplicationRequestDto applicationRequestDto) {
+    public void participateMeeting(Long meetingId, Member member, ApplicationDto applicationDto) {
         Meeting meeting = getMeeting(meetingId);
 
         Application application = Application.builder()
                 .meeting(meeting)
                 .member(member)
-                .pr(applicationRequestDto.getPr())
+                .pr(applicationDto.getPr())
                 .build();
         applicationRepository.save(application);
     }
 
-    public List<WaitingParticipateMemberResponseDto> waitingParticipateMemberList(Long meetingId) {
+    public List<WaitingParticipateMemberDto> waitingParticipateMemberList(Long meetingId) {
         Meeting meeting = getMeeting(meetingId);
         List<Application> applications = applicationRepository.findByMeetingAndStatus(meeting, Status.WAITING);
 
-        List<WaitingParticipateMemberResponseDto> waitingMember = applications.stream()
-                .map(application -> WaitingParticipateMemberResponseDto.builder()
+        List<WaitingParticipateMemberDto> waitingMember = applications.stream()
+                .map(application -> WaitingParticipateMemberDto.builder()
                         .id(application.getId())
                         .nickname(application.getMember().getNickname())
                         .bio(application.getMember().getBio())

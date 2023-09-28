@@ -10,8 +10,8 @@ import java.util.List;
 @Getter
 @Builder
 @AllArgsConstructor
-public class MeetingDetailResponseDto {
-    private MeetingMemberResponseDto meetingMemberResponseDto;
+public class MeetingDetailDto {
+    private MeetingMemberDto meetingMemberDto;
     private Long id;
     private String category;
     private String type;

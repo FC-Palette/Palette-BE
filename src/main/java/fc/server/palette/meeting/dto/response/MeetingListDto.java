@@ -8,7 +8,7 @@ import java.util.List;
 @Getter
 @Builder
 @AllArgsConstructor
-public class MeetingListResponseDto {
+public class MeetingListDto {
     private Long id;
     private String category;
     private String type;
