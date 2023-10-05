@@ -1,5 +1,6 @@
 package fc.server.palette.secondhand.controller;
 
+import fc.server.palette._common.exception.Exception403;
 import fc.server.palette._common.s3.S3DirectoryNames;
 import fc.server.palette._common.s3.S3ImageUploader;
 import fc.server.palette.member.auth.CustomUserDetails;
@@ -8,6 +9,7 @@ import fc.server.palette.secondhand.dto.request.CreateProductDto;
 import fc.server.palette.secondhand.dto.request.EditProductDto;
 import fc.server.palette.secondhand.dto.response.ProductDto;
 import fc.server.palette.secondhand.dto.response.ProductListDto;
+import fc.server.palette.secondhand.entity.Bookmark;
 import fc.server.palette.secondhand.entity.Media;
 import fc.server.palette.secondhand.entity.Secondhand;
 import fc.server.palette.secondhand.service.SecondhandService;
@@ -22,6 +24,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static fc.server.palette._common.exception.message.ExceptionMessage.CANNOT_BOOKMARK_YOURS;
+
 @RestController
 @RequestMapping("/api/secondhand")
 @RequiredArgsConstructor
@@ -30,14 +34,15 @@ public class SecondhandController {
     private final S3ImageUploader s3ImageUploader;
 
     @GetMapping("")
-    public ResponseEntity<List<ProductListDto>> getAllProducts() {
-        List<ProductListDto> products = secondhandService.getAllProducts();
+    public ResponseEntity<List<ProductListDto>> getAllProducts(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        List<ProductListDto> products = secondhandService.getAllProducts(userDetails.getMember().getId());
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
     @GetMapping("/{productId}")
-    public ResponseEntity<ProductDto> getProduct(@PathVariable Long productId) {
-        ProductDto product = secondhandService.getProduct(productId);
+    public ResponseEntity<ProductDto> getProduct(@PathVariable Long productId,
+                                                 @AuthenticationPrincipal CustomUserDetails userDetails) {
+        ProductDto product = secondhandService.getProduct(productId, userDetails.getMember().getId());
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
@@ -107,6 +112,18 @@ public class SecondhandController {
 
         return new ResponseEntity<>(product, HttpStatus.OK);
 
+    }
+
+    @PostMapping("{productId}/bookmark")
+    public ResponseEntity<?> addBookmark(@PathVariable Long productId,
+                                         @AuthenticationPrincipal CustomUserDetails userDetails){
+        if(userDetails.getMember().getId().equals(secondhandService.getAuthorId(productId))){
+            throw new Exception403(CANNOT_BOOKMARK_YOURS);
+        }
+        Bookmark bookmark = Bookmark.of(secondhandService.getSecondhand(productId),
+                userDetails.getMember());
+        secondhandService.addBookmark(productId, userDetails.getMember());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     private void saveImages(List<MultipartFile> images, Long productId) {

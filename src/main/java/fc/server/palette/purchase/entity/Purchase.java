@@ -115,4 +115,8 @@ public class Purchase extends BaseEntity {
     public void closeOffer() {
         this.isClosing = true;
     }
+
+    public void increaseHit() {
+        this.hits++;
+    }
 }

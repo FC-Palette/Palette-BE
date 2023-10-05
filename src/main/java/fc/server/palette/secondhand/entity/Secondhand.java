@@ -90,4 +90,8 @@ public class Secondhand extends BaseEntity {
         this.transactionEndTime = editProductDto.getTransactionEndTime();
         this.description = editProductDto.getDescription();
     }
+
+    public void increaseHit() {
+        this.hits++;
+    }
 }

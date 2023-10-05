@@ -30,7 +30,7 @@ public class ProductDto {
     private Boolean isSoldOut;
     private Boolean isFree;
     private LocalDateTime createdAt;
-
+    private List<AnotherProductDto> anotherProductDtos;
     public ChatRoomDetailContentDto toChatRoomInfo() {
         return ChatRoomDetailContentDto.builder()
                 .contentId(id)

@@ -25,4 +25,10 @@ public class PurchaseParticipant extends BaseEntity {
 
     @OneToMany(mappedBy = "purchaseParticipant", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<ParticipantMember> participantMemberList;
+
+    public static PurchaseParticipant of(Purchase purchase){
+        return PurchaseParticipant.builder()
+                .purchase(purchase)
+                .build();
+    }
 }

@@ -24,4 +24,11 @@ public class ParticipantMember {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private PurchaseParticipant purchaseParticipant;
+
+    public static ParticipantMember of(Member member, PurchaseParticipant purchaseParticipant){
+        return ParticipantMember.builder()
+                .member(member)
+                .purchaseParticipant(purchaseParticipant)
+                .build();
+    }
 }

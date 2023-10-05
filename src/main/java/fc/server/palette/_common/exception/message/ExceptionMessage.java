@@ -12,5 +12,4 @@ public class ExceptionMessage {
     public static final String NO_DUPLICATED_LIKE = "이미 좋아요를 눌렀습니다.";
     public static final String NO_DISLIKE = "좋아요를 누른적이 없습니다.";
     public static final String CANNOT_FOLLOWING_YOURSELF = "나 자신을 팔로우 할 수 없습니다.";
-
 }

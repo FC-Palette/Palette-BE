@@ -1,5 +1,6 @@
 package fc.server.palette.purchase.controller;
 
+import fc.server.palette._common.exception.Exception403;
 import fc.server.palette._common.s3.S3DirectoryNames;
 import fc.server.palette._common.s3.S3ImageUploader;
 import fc.server.palette.chat.entity.type.ChatRoomType;
@@ -24,6 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static fc.server.palette._common.exception.message.ExceptionMessage.CANNOT_BOOKMARK_YOURS;
+
 @RestController
 @RequestMapping("/api/groupPurchase")
 @RequiredArgsConstructor
@@ -34,14 +37,15 @@ public class PurchaseController {
     private final ChatRoomService chatRoomService;
 
     @GetMapping("")
-    public ResponseEntity<List<OfferListDto>> getAllOffers() {
-        List<OfferListDto> offers = purchaseService.getAllOffers();
+    public ResponseEntity<List<OfferListDto>> getAllOffers(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        List<OfferListDto> offers = purchaseService.getAllOffers(customUserDetails.getMember().getId());
         return new ResponseEntity<>(offers, HttpStatus.OK);
     }
 
     @GetMapping("/{offerId}")
-    public ResponseEntity<OfferDto> getOffer(@PathVariable Long offerId) {
-        OfferDto offer = purchaseService.getOffer(offerId);
+    public ResponseEntity<OfferDto> getOffer(@PathVariable Long offerId,
+                                             @AuthenticationPrincipal CustomUserDetails userDetails) {
+        OfferDto offer = purchaseService.getOffer(offerId, userDetails.getMember().getId());
         return new ResponseEntity<>(offer, HttpStatus.OK);
     }
 
@@ -52,8 +56,8 @@ public class PurchaseController {
         Purchase purchase = groupPurchaseOfferDto.toEntity(userDetails.getMember());
         List<String> savedImageUrls = s3ImageUploader.save(S3DirectoryNames.PURCHASE, images);
         List<Media> mediaList = toMediaList(savedImageUrls, purchase);
-        OfferDto offer = purchaseService.createOffer(purchase, mediaList);
-        chatRoomService.openGroupChatRoom(offer, userDetails.getMember().getId(),ChatRoomType.PURCHASE);
+        OfferDto offer = purchaseService.createOffer(purchase, userDetails.getMember(), mediaList);
+        chatRoomService.openGroupChatRoom(offer, userDetails.getMember().getId(), ChatRoomType.PURCHASE);
         return new ResponseEntity<>(offer, HttpStatus.OK);
     }
 
@@ -68,6 +72,9 @@ public class PurchaseController {
     @PostMapping("/{offerId}/bookmark")
     public ResponseEntity<?> addBookmark(@PathVariable Long offerId,
                                          @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if(userDetails.getMember().getId().equals(purchaseService.getAuthorId(offerId))){
+            throw new Exception403(CANNOT_BOOKMARK_YOURS);
+        }
         purchaseService.addBookmark(offerId, userDetails.getMember());
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -122,6 +129,14 @@ public class PurchaseController {
         userDetails.validateAuthority(purchaseService.getAuthorId(offerId));
         OfferDto offer = purchaseService.closeOffer(offerId);
         return new ResponseEntity<>(offer, HttpStatus.OK);
+    }
+
+    @PostMapping("{offerId}/participate")
+    public ResponseEntity<?> participateOffer(@PathVariable Long offerId,
+                                                @AuthenticationPrincipal CustomUserDetails userDetails){
+        purchaseService.participateOffer(offerId, userDetails.getMember());
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     private void saveImages(List<MultipartFile> images, Long offerId) {

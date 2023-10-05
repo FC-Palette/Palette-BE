@@ -24,4 +24,11 @@ public class Bookmark extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Purchase purchase;
+
+    public static Bookmark of(Purchase purchase, Member member){
+        return Bookmark.builder()
+                .purchase(purchase)
+                .member(member)
+                .build();
+    }
 }
