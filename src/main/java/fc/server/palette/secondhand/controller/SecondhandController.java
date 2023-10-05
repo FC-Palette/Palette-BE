@@ -116,13 +116,21 @@ public class SecondhandController {
 
     @PostMapping("{productId}/bookmark")
     public ResponseEntity<?> addBookmark(@PathVariable Long productId,
-                                         @AuthenticationPrincipal CustomUserDetails userDetails){
-        if(userDetails.getMember().getId().equals(secondhandService.getAuthorId(productId))){
+                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails.getMember().getId().equals(secondhandService.getAuthorId(productId))) {
             throw new Exception403(CANNOT_BOOKMARK_YOURS);
         }
         Bookmark bookmark = Bookmark.of(secondhandService.getSecondhand(productId),
                 userDetails.getMember());
         secondhandService.addBookmark(productId, userDetails.getMember());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/{productId}/unbookmark")
+    public ResponseEntity<?> unbookmarkProduct(@PathVariable Long productId,
+                                               @AuthenticationPrincipal CustomUserDetails userDetails) {
+        secondhandService.unbookmarkProduct(productId, userDetails.getMember());
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

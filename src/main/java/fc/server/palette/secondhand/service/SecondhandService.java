@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static fc.server.palette._common.exception.message.ExceptionMessage.BOOKMARK_ALREADY_EXIST;
+import static fc.server.palette._common.exception.message.ExceptionMessage.BOOKMARK_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -180,10 +181,21 @@ public class SecondhandService {
         secondhandBookmarkRepository.save(Bookmark.of(getSecondhand(productId), member));
     }
 
-    private boolean isBookmarked(Long productId, Long memberId){
+    @Transactional
+    public void unbookmarkProduct(Long productId, Member member) {
+        Bookmark bookmark = secondhandBookmarkRepository.findByMemberIdAndSecondhandId(member.getId(), productId)
+                .orElse(null);
+        if (bookmark == null) {
+            throw new Exception400(productId.toString(), BOOKMARK_NOT_FOUND);
+        }
+
+        secondhandBookmarkRepository.delete(bookmark);
+    }
+
+    private boolean isBookmarked(Long productId, Long memberId) {
         Bookmark bookmark = secondhandBookmarkRepository.findByMemberIdAndSecondhandId(memberId, productId)
                 .orElse(null);
-        return bookmark!=null;
+        return bookmark != null;
     }
 
     private List<String> getImagesUrl(Long secondhandId) {
