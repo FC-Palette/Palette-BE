@@ -175,9 +175,6 @@ public class MemberService {
                     .following(memberRepository.getReferenceById(followingId))
                     .build();
             followRepository.save(follow);
-        } else {
-            throw new Exception404(ExceptionMessage.FOLLOWED_FOLLOWING_EXIST);
-
         }
 
         if(followedId.equals(followingId)) {

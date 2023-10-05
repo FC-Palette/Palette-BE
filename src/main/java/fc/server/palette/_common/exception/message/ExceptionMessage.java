@@ -11,7 +11,6 @@ public class ExceptionMessage {
     public static final String PARTICIPATE_YOURSELF_DENIED = "자신의 게시물에 직접 참여할 수 없습니다.";
     public static final String NO_DUPLICATED_LIKE = "이미 좋아요를 눌렀습니다.";
     public static final String NO_DISLIKE = "좋아요를 누른적이 없습니다.";
-    public static final String FOLLOWED_FOLLOWING_EXIST = "해당 팔로우 팔로워 관계가 이미존재합니다.";
     public static final String CANNOT_FOLLOWING_YOURSELF = "나 자신을 팔로우 할 수 없습니다.";
 
 }
