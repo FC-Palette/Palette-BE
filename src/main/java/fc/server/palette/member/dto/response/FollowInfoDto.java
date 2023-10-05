@@ -10,7 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FollowInfoDto {
+
+    private Long memberId;
     private String image;
     private String nickname;
     private String bio;
+
+
 }

@@ -219,6 +219,7 @@ public class MemberService {
 
     public FollowInfoDto followInfo(Member member) {
         return new FollowInfoDto().builder()
+                .memberId(member.getId())
                 .image(member.getImage())
                 .nickname(member.getNickname())
                 .bio(member.getBio())
