@@ -123,6 +123,7 @@ public class PurchaseService {
                 .hits(purchase.getHits())
                 .created_at(purchase.getCreatedAt())
                 .isParticipating(isParticipating(offerId, memberId))
+                .isBookmarked(isBookmarked(offerId,memberId))
                 .build();
     }
 
