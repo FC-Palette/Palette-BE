@@ -53,9 +53,10 @@ public class SecondhandService {
         if (!loginMember.equals(getAuthorId(productId))) {
             increaseHit(productId);
         }
+        boolean isBookmarked = isBookmarked(productId, loginMember);
         Secondhand product = secondhandRespository.findById(productId)
                 .orElseThrow(() -> new Exception404(ExceptionMessage.OBJECT_NOT_FOUND));
-        return buildProductDto(product);
+        return buildProductDto(product, isBookmarked);
     }
 
     private void increaseHit(Long productId) {
@@ -101,7 +102,7 @@ public class SecondhandService {
     public ProductDto createProduct(Secondhand secondhand, List<Media> mediaList) {
         Secondhand savedProduct = secondhandRespository.save(secondhand);
         secondhandMediaRepository.saveAll(mediaList);
-        return buildProductDto(savedProduct);
+        return buildProductDto(savedProduct, false);
     }
 
     @Transactional
@@ -109,7 +110,7 @@ public class SecondhandService {
         Secondhand product = secondhandRespository.findById(productId)
                 .orElseThrow(() -> new Exception404(ExceptionMessage.OBJECT_NOT_FOUND));
         product.updateProduct(editProductDto);
-        return buildProductDto(product);
+        return buildProductDto(product, false);
     }
 
     private ProductListDto buildProductList(Secondhand secondhand, Boolean isBookmarked) {
@@ -144,6 +145,27 @@ public class SecondhandService {
                 .isFree(secondhand.getIsFree())
                 .createdAt(secondhand.getCreatedAt())
                 .anotherProductDtos(getAnotherProducts(secondhand.getMember().getId(), secondhand.getId()))
+                .build();
+    }
+
+    private ProductDto buildProductDto(Secondhand secondhand, Boolean isBookmarked) {
+        return ProductDto.builder()
+                .id(secondhand.getId())
+                .member(MemberDto.of(secondhand.getMember()))
+                .bookmarkCount(getBookmarkCount(secondhand.getId()))
+                .images(getImagesUrl(secondhand.getId()))
+                .title(secondhand.getTitle())
+                .category(secondhand.getCategory())
+                .transactionStartTime(secondhand.getTransactionStartTime())
+                .transactionEndTime(secondhand.getTransactionEndTime())
+                .description(secondhand.getDescription())
+                .price(secondhand.getPrice())
+                .hits(secondhand.getHits())
+                .isSoldOut(secondhand.getIsSoldOut())
+                .isFree(secondhand.getIsFree())
+                .createdAt(secondhand.getCreatedAt())
+                .anotherProductDtos(getAnotherProducts(secondhand.getMember().getId(), secondhand.getId()))
+                .isBookmarked(isBookmarked)
                 .build();
     }
 
