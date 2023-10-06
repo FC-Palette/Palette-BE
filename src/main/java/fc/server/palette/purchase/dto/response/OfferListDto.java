@@ -4,7 +4,8 @@ import fc.server.palette.purchase.entity.type.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Builder
@@ -19,4 +20,5 @@ public class OfferListDto {
     private Integer hits;
     private Boolean isBookmarked;
     private Boolean isclosing;
+    private LocalDateTime created_at;
 }
