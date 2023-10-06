@@ -11,6 +11,7 @@ import fc.server.palette.purchase.dto.response.OfferListDto;
 import fc.server.palette.purchase.entity.*;
 import fc.server.palette.purchase.repository.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -209,6 +210,16 @@ public class PurchaseService {
         purchaseParticipantRepository.save(purchaseParticipant);
         ParticipantMember participantMember = ParticipantMember.of(member, purchaseParticipant);
         purchaseParticipantMemberRepository.save(participantMember);
+    }
+
+    @Transactional
+    public void unbookmarkOffer(Long offerId, Member member){
+        Bookmark bookmark = purchaseBookmarkRepository.findByMemberIdAndPurchaseId(member.getId(), offerId)
+                .orElse(null);
+        if(bookmark==null){
+            throw new Exception400(offerId.toString(), ExceptionMessage.BOOKMARK_NOT_FOUND);
+        }
+        purchaseBookmarkRepository.delete(bookmark);
     }
 
     private boolean isParticipating(Long offerId, Long memberId){
