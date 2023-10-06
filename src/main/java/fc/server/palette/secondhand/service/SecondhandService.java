@@ -123,6 +123,7 @@ public class SecondhandService {
                 .hits(secondhand.getHits())
                 .isBookmarked(isBookmarked)
                 .isSoldOut(secondhand.getIsSoldOut())
+                .created_at(secondhand.getCreatedAt())
                 .build();
     }
 
