@@ -169,16 +169,14 @@ public class MemberService {
 
     public void follow(Long followedId, Long followingId) {
         Optional<Follow> existingFollow = followRepository.findByFollowedIdAndFollowingId(followedId, followingId);
-        if (existingFollow.isEmpty()) {
-            Follow follow = Follow.builder()
-                    .followed(memberRepository.getById(followedId))
-                    .following(memberRepository.getReferenceById(followingId))
-                    .build();
-            followRepository.save(follow);
-        }
 
-        if(followedId.equals(followingId)) {
-            throw new Exception404(ExceptionMessage.CANNOT_FOLLOWING_YOURSELF);
+        if (existingFollow.isEmpty()) {
+                Follow follow = Follow.builder()
+                        .followed(memberRepository.getById(followedId))
+                        .following(memberRepository.getReferenceById(followingId))
+                        .build();
+                followRepository.save(follow);
+
         }
     }
 

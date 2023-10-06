@@ -13,4 +13,8 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
     Application findByMeetingIdAndMemberIdAndStatus(Long meetingId, Long loginMember, Status status);
 
     List<Application> findByMemberId(Long memberId);
+
+    boolean existsByMeetingIdAndMemberId(Long meetingId, Long id);
+
+    Application findByMeetingIdAndMemberIdAndStatusIn(Long meetingId, Long id, List<Status> waiting);
 }

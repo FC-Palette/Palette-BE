@@ -7,6 +7,7 @@ import fc.server.palette.chat.repository.ChatRoomRepository;
 import fc.server.palette.meeting.dto.request.MeetingCreateDto;
 import fc.server.palette.purchase.dto.response.OfferDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -20,6 +21,7 @@ import java.util.Optional;
 public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
+    private final SimpMessageSendingOperations template;
 
     private static final int PERSONAL_ROOM_MAX_MEMBER = 2;
 
@@ -113,6 +115,11 @@ public class ChatRoomService {
         chatRoom.getExitList().put(memberId, LocalDateTime.now());
 
         chatRoomRepository.save(chatRoom);
+    }
+
+    public void participantGroupChatRoom(Map<Long, Long> results, ChatRoomType type) {
+        results.keySet()
+                .forEach(key -> participantGroupChatRoom(results.get(key), key, type));
     }
 
     @Transactional

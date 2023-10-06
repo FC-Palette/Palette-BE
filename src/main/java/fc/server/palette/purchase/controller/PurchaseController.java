@@ -135,6 +135,7 @@ public class PurchaseController {
     public ResponseEntity<?> participateOffer(@PathVariable Long offerId,
                                                 @AuthenticationPrincipal CustomUserDetails userDetails){
         purchaseService.participateOffer(offerId, userDetails.getMember());
+        chatRoomService.participantGroupChatRoom(userDetails.getMember().getId(), offerId, ChatRoomType.PURCHASE);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
