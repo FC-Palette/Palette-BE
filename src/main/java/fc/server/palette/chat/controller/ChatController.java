@@ -85,18 +85,27 @@ public class ChatController {
         }
 
         if (type.equals(ChatRoomType.MEETING)) {
+            if (meetingService.getMeeting(contentId).isClosing()) {
+                response.setDelete(true);
+                return ResponseEntity.ok(response);
+            }
             response.setContentNotice(meetingService.getDetailMeeting(userDetails.getMember().getId(), contentId).toChatRoomInfo());
-            if(meetingService.getMeeting(contentId).isClosing()) response.setDelete(true);
             return ResponseEntity.ok(response);
         }
         if (type.equals(ChatRoomType.PURCHASE)) {
+            if (purchaseService.getPurchase(contentId).getIsClosing()) {
+                response.setDelete(true);
+                return ResponseEntity.ok(response);
+            }
             response.setContentNotice(purchaseService.getOffer(contentId).toChatRoomInfo());
-            if(purchaseService.getPurchase(contentId).getIsClosing()) response.setDelete(true);
             return ResponseEntity.ok(response);
         }
         if (type.equals(ChatRoomType.SECONDHAND)) {
+            if (secondhandService.getSecondhand(contentId).getIsSoldOut()) {
+                response.setDelete(true);
+                return ResponseEntity.ok(response);
+            }
             response.setContentNotice(secondhandService.getProduct(contentId).toChatRoomInfo());
-            if(secondhandService.getSecondhand(contentId).getIsSoldOut()) response.setDelete(true);
             return ResponseEntity.ok(response);
         }
         return ResponseEntity.ok(response);

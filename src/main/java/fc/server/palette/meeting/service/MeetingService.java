@@ -30,10 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -520,7 +517,8 @@ public class MeetingService {
         }
     }
 
-    public void approveParticipateMember(List<Long> participateIdList){
+    public Map<Long, Long> approveParticipateMember(List<Long> participateIdList){
+        Map<Long, Long> results = new HashMap<>();
         for(Long id: participateIdList){
             Application application = applicationRepository.findById(id)
                     .orElseThrow(() -> new Exception400(id.toString(), ExceptionMessage.NO_APPLICATION_ID));
@@ -529,7 +527,9 @@ public class MeetingService {
             }
             application.participateApprove();
             application.getMeeting().setRecruitedPersonnel();
+            results.put(application.getMeeting().getId(), id);
         }
+        return results;
     }
 
     public Meeting getMeeting(Long meetingId) {

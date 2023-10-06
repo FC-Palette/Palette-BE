@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/develop")
@@ -168,6 +169,7 @@ public class MeetingController {
             @PathVariable Long meetingId
     ){
         meetingService.participateFirstComeMeeting(meetingId, userDetails.getMember());
+        chatRoomService.participantGroupChatRoom(userDetails.getMember().getId(), meetingId, ChatRoomType.MEETING);
         return ResponseEntity.ok("모임 신청이 완료되었습니다");
     }
 
@@ -192,7 +194,8 @@ public class MeetingController {
     public ResponseEntity<?> confirmParticipateMember(
             @RequestBody List<Long> participateIdList
     ){
-        meetingService.approveParticipateMember(participateIdList);
+        Map<Long, Long> results = meetingService.approveParticipateMember(participateIdList);
+        chatRoomService.participantGroupChatRoom(results, ChatRoomType.MEETING);
         return ResponseEntity.ok("승인하였습니다.");
     }
 
