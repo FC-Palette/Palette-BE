@@ -123,6 +123,7 @@ public class PurchaseService {
                 .hits(purchase.getHits())
                 .created_at(purchase.getCreatedAt())
                 .isParticipating(isParticipating(offerId, memberId))
+                .isBookmarked(isBookmarked(offerId,memberId))
                 .build();
     }
 
@@ -137,6 +138,7 @@ public class PurchaseService {
                 .hits(purchase.getHits())
                 .isBookmarked(isBookmarked)
                 .isclosing(purchase.getIsClosing())
+                .created_at(purchase.getCreatedAt())
                 .build();
     }
 

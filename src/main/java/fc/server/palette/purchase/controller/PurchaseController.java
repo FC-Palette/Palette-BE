@@ -145,7 +145,7 @@ public class PurchaseController {
     public ResponseEntity<?> unbookmarkOffer(@PathVariable Long offerId,
                                              @AuthenticationPrincipal CustomUserDetails userDetails){
         purchaseService.unbookmarkOffer(offerId, userDetails.getMember());
-        
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
     private void saveImages(List<MultipartFile> images, Long offerId) {

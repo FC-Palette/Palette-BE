@@ -31,6 +31,8 @@ public class ProductDto {
     private Boolean isFree;
     private LocalDateTime createdAt;
     private List<AnotherProductDto> anotherProductDtos;
+    private Boolean isBookmarked;
+
     public ChatRoomDetailContentDto toChatRoomInfo() {
         return ChatRoomDetailContentDto.builder()
                 .contentId(id)

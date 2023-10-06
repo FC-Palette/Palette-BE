@@ -32,6 +32,8 @@ public class OfferDto {
     private Integer hits;
     private LocalDateTime created_at;
     private Boolean isParticipating;
+    private Boolean isBookmarked;
+
 
     public ChatRoomDetailContentDto toChatRoomInfo() {
         return ChatRoomDetailContentDto.builder()

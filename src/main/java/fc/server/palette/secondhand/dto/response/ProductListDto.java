@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 @AllArgsConstructor
@@ -18,4 +20,6 @@ public class ProductListDto {
     private Integer hits;
     private Boolean isBookmarked;
     private Boolean isSoldOut;
+    private LocalDateTime created_at;
+
 }
