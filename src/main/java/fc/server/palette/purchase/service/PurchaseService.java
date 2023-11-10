@@ -11,10 +11,10 @@ import fc.server.palette.purchase.dto.response.OfferListDto;
 import fc.server.palette.purchase.entity.*;
 import fc.server.palette.purchase.repository.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -249,5 +249,10 @@ public class PurchaseService {
         Purchase purchase = purchaseRepository.findById(offerId)
                 .orElseThrow(() -> new Exception404(ExceptionMessage.OBJECT_NOT_FOUND));
         return purchase.getMember().getId();
+    }
+
+    @Transactional
+    public int editClosingStatus(LocalDate now){
+        return purchaseRepository.bulkUpdateClosing(now);
     }
 }
