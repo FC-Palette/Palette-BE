@@ -4,14 +4,14 @@ import fc.server.palette.purchase.entity.type.ClosingType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Getter
 @AllArgsConstructor
 public class EditOfferDto {
     private String shopUrl;
-    private Date startDate;
-    private Date endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private Integer headCount;
     private Integer price;
     private String description;

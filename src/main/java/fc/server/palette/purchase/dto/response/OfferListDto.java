@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -19,6 +20,7 @@ public class OfferListDto {
     private Integer bookmarkCount;
     private Integer hits;
     private Boolean isBookmarked;
-    private Boolean isclosing;
+    private Boolean isClosing;
+    private LocalDate endDate;
     private LocalDateTime created_at;
 }

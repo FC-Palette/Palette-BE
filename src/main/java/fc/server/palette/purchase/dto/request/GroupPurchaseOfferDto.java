@@ -6,18 +6,16 @@ import fc.server.palette.purchase.entity.type.Category;
 import fc.server.palette.purchase.entity.type.ClosingType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDate;
 
 @Getter
 @AllArgsConstructor
 public class GroupPurchaseOfferDto {
     private String title;
     private Category category;
-    private Date startDate;
-    private Date endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private Integer headCount;
     private String description;
     private Integer price;
