@@ -137,7 +137,7 @@ public class PurchaseService {
                 .bookmarkCount(getBookmarkCount(purchase.getId()))
                 .hits(purchase.getHits())
                 .isBookmarked(isBookmarked)
-                .isclosing(purchase.getIsClosing())
+                .isClosing(purchase.getIsClosing())
                 .created_at(purchase.getCreatedAt())
                 .build();
     }

@@ -19,6 +19,6 @@ public class OfferListDto {
     private Integer bookmarkCount;
     private Integer hits;
     private Boolean isBookmarked;
-    private Boolean isclosing;
+    private Boolean isClosing;
     private LocalDateTime created_at;
 }
