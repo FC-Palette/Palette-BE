@@ -138,6 +138,7 @@ public class PurchaseService {
                 .hits(purchase.getHits())
                 .isBookmarked(isBookmarked)
                 .isClosing(purchase.getIsClosing())
+                .endDate(purchase.getEndDate())
                 .created_at(purchase.getCreatedAt())
                 .build();
     }
