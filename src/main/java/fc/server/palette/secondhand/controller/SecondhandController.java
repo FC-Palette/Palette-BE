@@ -143,5 +143,4 @@ public class SecondhandController {
             secondhandService.saveImages(MediaList);
         }
     }
-
 }

@@ -7,8 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -25,8 +25,8 @@ public class OfferDto {
     private Integer bookmarkCount;
     private Integer currentParticipantCount;
     private List<String> image;
-    private Date startDate;
-    private Date endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private Integer price;
     private Boolean isClosing;
     private Integer hits;
