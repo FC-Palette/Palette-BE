@@ -13,6 +13,7 @@ import fc.server.palette.purchase.dto.response.OfferDto;
 import fc.server.palette.purchase.dto.response.OfferListDto;
 import fc.server.palette.purchase.entity.Media;
 import fc.server.palette.purchase.entity.Purchase;
+import fc.server.palette.purchase.entity.type.Category;
 import fc.server.palette.purchase.service.PurchaseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -72,7 +73,7 @@ public class PurchaseController {
     @PostMapping("/{offerId}/bookmark")
     public ResponseEntity<?> addBookmark(@PathVariable Long offerId,
                                          @AuthenticationPrincipal CustomUserDetails userDetails) {
-        if(userDetails.getMember().getId().equals(purchaseService.getAuthorId(offerId))){
+        if (userDetails.getMember().getId().equals(purchaseService.getAuthorId(offerId))) {
             throw new Exception403(CANNOT_BOOKMARK_YOURS);
         }
         purchaseService.addBookmark(offerId, userDetails.getMember());
@@ -133,7 +134,7 @@ public class PurchaseController {
 
     @PostMapping("/{offerId}/participate")
     public ResponseEntity<?> participateOffer(@PathVariable Long offerId,
-                                                @AuthenticationPrincipal CustomUserDetails userDetails){
+                                              @AuthenticationPrincipal CustomUserDetails userDetails) {
         purchaseService.participateOffer(offerId, userDetails.getMember());
         chatRoomService.participantGroupChatRoom(userDetails.getMember().getId(), offerId, ChatRoomType.PURCHASE);
 
@@ -143,11 +144,24 @@ public class PurchaseController {
 
     @PostMapping("/{offerId}/unbookmark")
     public ResponseEntity<?> unbookmarkOffer(@PathVariable Long offerId,
-                                             @AuthenticationPrincipal CustomUserDetails userDetails){
+                                             @AuthenticationPrincipal CustomUserDetails userDetails) {
         purchaseService.unbookmarkOffer(offerId, userDetails.getMember());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<OfferListDto>> filteredOffer(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                                            @RequestParam Category category,
+                                                            @RequestParam int minPrice,
+                                                            @RequestParam int maxPrice) {
+    //todo 최대 혹은 최소 제한이 없을 떄 어떻게 할지 생각
+        List<OfferListDto> filteredOffers = purchaseService.getFilteredOffers(category, minPrice, maxPrice, customUserDetails.getMember().getId());
+
+        return new ResponseEntity<>(filteredOffers, HttpStatus.OK);
+    }
+
+
     private void saveImages(List<MultipartFile> images, Long offerId) {
         if (images != null) {
             //s3 저장
