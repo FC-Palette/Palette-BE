@@ -5,6 +5,7 @@ import fc.server.palette._common.exception.Exception404;
 import fc.server.palette._common.exception.message.ExceptionMessage;
 import fc.server.palette.member.entity.Member;
 import fc.server.palette.purchase.dto.response.MemberDto;
+import fc.server.palette.purchase.entity.type.Category;
 import fc.server.palette.secondhand.dto.request.EditProductDto;
 import fc.server.palette.secondhand.dto.response.AnotherProductDto;
 import fc.server.palette.secondhand.dto.response.ProductDto;
@@ -213,6 +214,15 @@ public class SecondhandService {
         }
 
         secondhandBookmarkRepository.delete(bookmark);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProductListDto> getFilteredProducts(List<Category> categories, Long memberId){
+        List<Secondhand> products = secondhandRespository.findAllByCategoryIn(categories);
+
+        return products.stream()
+                .map(product -> buildProductList(product, isBookmarked(product.getId(), memberId)))
+                .collect(Collectors.toList());
     }
 
     private boolean isBookmarked(Long productId, Long memberId) {
