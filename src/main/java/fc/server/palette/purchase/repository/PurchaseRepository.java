@@ -16,5 +16,5 @@ public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
     @Query("update Purchase p set p.isClosing=true where p.endDate < :now")
     int bulkUpdateClosing(@Param("now") LocalDate now);
 
-    List<Purchase> findAllByCategoryAndPriceBetween(Category category, Integer minPrice, Integer maxPrice);
+    List<Purchase> findAllByCategoryInAndPriceBetween(List<Category> categories, Integer minPrice, Integer maxPrice);
 }
