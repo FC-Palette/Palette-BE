@@ -9,6 +9,7 @@ import fc.server.palette.purchase.dto.response.MemberDto;
 import fc.server.palette.purchase.dto.response.OfferDto;
 import fc.server.palette.purchase.dto.response.OfferListDto;
 import fc.server.palette.purchase.entity.*;
+import fc.server.palette.purchase.entity.type.Category;
 import fc.server.palette.purchase.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -76,7 +77,7 @@ public class PurchaseService {
     }
 
     @Transactional
-    public OfferDto createOffer(Purchase purchase, Member member,List<Media> mediaList) {
+    public OfferDto createOffer(Purchase purchase, Member member, List<Media> mediaList) {
         Purchase savedPurchase = purchaseRepository.save(purchase);
         participateOffer(purchase.getId(), member);
         purchaseMediaRepository.saveAll(mediaList);
@@ -104,7 +105,7 @@ public class PurchaseService {
                 .build();
     }
 
-    private OfferDto buildOffer(Purchase purchase, Long offerId, Long memberId){
+    private OfferDto buildOffer(Purchase purchase, Long offerId, Long memberId) {
         return OfferDto.builder()
                 .id(purchase.getId())
                 .member(MemberDto.of(purchase.getMember()))
@@ -123,7 +124,7 @@ public class PurchaseService {
                 .hits(purchase.getHits())
                 .created_at(purchase.getCreatedAt())
                 .isParticipating(isParticipating(offerId, memberId))
-                .isBookmarked(isBookmarked(offerId,memberId))
+                .isBookmarked(isBookmarked(offerId, memberId))
                 .build();
     }
 
@@ -171,16 +172,16 @@ public class PurchaseService {
 
     @Transactional
     public void addBookmark(Long offerId, Member member) {
-        if(isBookmarked(offerId, member.getId())){
-            throw new Exception400(offerId.toString(),BOOKMARK_ALREADY_EXIST);
+        if (isBookmarked(offerId, member.getId())) {
+            throw new Exception400(offerId.toString(), BOOKMARK_ALREADY_EXIST);
         }
         purchaseBookmarkRepository.save(Bookmark.of(getPurchase(offerId), member));
     }
 
-    private boolean isBookmarked(Long offerId, Long memberId){
+    private boolean isBookmarked(Long offerId, Long memberId) {
         Bookmark bookmark = purchaseBookmarkRepository.findByMemberIdAndPurchaseId(memberId, offerId)
                 .orElse(null);
-        return bookmark!=null;
+        return bookmark != null;
     }
 
     @Transactional
@@ -205,8 +206,8 @@ public class PurchaseService {
     }
 
     @Transactional
-    public void participateOffer(Long offerId, Member member){
-        if(isParticipating(offerId, member.getId())){
+    public void participateOffer(Long offerId, Member member) {
+        if (isParticipating(offerId, member.getId())) {
             throw new Exception400(offerId.toString(), ExceptionMessage.PARTICIPANT_ALREADY_EXIST);
         }
         PurchaseParticipant purchaseParticipant = PurchaseParticipant.of(getPurchase(offerId));
@@ -216,16 +217,16 @@ public class PurchaseService {
     }
 
     @Transactional
-    public void unbookmarkOffer(Long offerId, Member member){
+    public void unbookmarkOffer(Long offerId, Member member) {
         Bookmark bookmark = purchaseBookmarkRepository.findByMemberIdAndPurchaseId(member.getId(), offerId)
                 .orElse(null);
-        if(bookmark==null){
+        if (bookmark == null) {
             throw new Exception400(offerId.toString(), ExceptionMessage.BOOKMARK_NOT_FOUND);
         }
         purchaseBookmarkRepository.delete(bookmark);
     }
 
-    private boolean isParticipating(Long offerId, Long memberId){
+    private boolean isParticipating(Long offerId, Long memberId) {
         List<ParticipantMember> participants = purchaseParticipantMemberRepository.findAllByMemberId(memberId);
         ParticipantMember participantMember = participants
                 .stream()
@@ -253,7 +254,15 @@ public class PurchaseService {
     }
 
     @Transactional
-    public int editClosingStatus(LocalDate now){
+    public int editClosingStatus(LocalDate now) {
         return purchaseRepository.bulkUpdateClosing(now);
+    }
+
+    @Transactional(readOnly = true)
+    public List<OfferListDto> getFilteredOffers(List<Category> categories, int minPrice, int maxPrice, Long memberId) {
+        List<Purchase> purchases = purchaseRepository.findAllByCategoryInAndPriceBetween(categories, minPrice, maxPrice);
+        return purchases.stream()
+                .map(purchase -> buildOfferList(purchase, isBookmarked(purchase.getId(), memberId)))
+                .collect(Collectors.toList());
     }
 }

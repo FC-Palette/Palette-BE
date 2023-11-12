@@ -5,6 +5,7 @@ import fc.server.palette._common.s3.S3DirectoryNames;
 import fc.server.palette._common.s3.S3ImageUploader;
 import fc.server.palette.member.auth.CustomUserDetails;
 import fc.server.palette.purchase.dto.request.RemoveImageDto;
+import fc.server.palette.purchase.entity.type.Category;
 import fc.server.palette.secondhand.dto.request.CreateProductDto;
 import fc.server.palette.secondhand.dto.request.EditProductDto;
 import fc.server.palette.secondhand.dto.response.ProductDto;
@@ -132,6 +133,14 @@ public class SecondhandController {
         secondhandService.unbookmarkProduct(productId, userDetails.getMember());
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<ProductListDto>> filteredProducts(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                                                 @RequestParam List<Category> categories){
+        List<ProductListDto> filteredProducts = secondhandService.getFilteredProducts(categories, customUserDetails.getMember().getId());
+
+        return new ResponseEntity<>(filteredProducts, HttpStatus.OK);
     }
 
     private void saveImages(List<MultipartFile> images, Long productId) {
