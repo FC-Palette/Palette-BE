@@ -259,8 +259,8 @@ public class PurchaseService {
     }
 
     @Transactional(readOnly = true)
-    public List<OfferListDto> getFilteredOffers(Category category, int minPrice, int maxPrice, Long memberId) {
-        List<Purchase> purchases = purchaseRepository.findAllByCategoryAndPriceBetween(category, minPrice, maxPrice);
+    public List<OfferListDto> getFilteredOffers(List<Category> categories, int minPrice, int maxPrice, Long memberId) {
+        List<Purchase> purchases = purchaseRepository.findAllByCategoryInAndPriceBetween(categories, minPrice, maxPrice);
         return purchases.stream()
                 .map(purchase -> buildOfferList(purchase, isBookmarked(purchase.getId(), memberId)))
                 .collect(Collectors.toList());
