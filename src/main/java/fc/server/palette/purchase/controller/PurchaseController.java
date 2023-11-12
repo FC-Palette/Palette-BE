@@ -152,11 +152,11 @@ public class PurchaseController {
 
     @GetMapping("/filter")
     public ResponseEntity<List<OfferListDto>> filteredOffer(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                                            @RequestParam Category category,
+                                                            @RequestParam List<Category> categories,
                                                             @RequestParam int minPrice,
                                                             @RequestParam int maxPrice) {
-    //todo 최대 혹은 최소 제한이 없을 떄 어떻게 할지 생각
-        List<OfferListDto> filteredOffers = purchaseService.getFilteredOffers(category, minPrice, maxPrice, customUserDetails.getMember().getId());
+        //todo 최대 혹은 최소 제한이 없을 떄 어떻게 할지 생각, 카테고리 복수개 일 때도 생각, 카테고리 맞지 않을 때 예외처리, minPrice maxPrice 범위 초과 시 예외처리
+        List<OfferListDto> filteredOffers = purchaseService.getFilteredOffers(categories, minPrice, maxPrice, customUserDetails.getMember().getId());
 
         return new ResponseEntity<>(filteredOffers, HttpStatus.OK);
     }
