@@ -89,7 +89,7 @@ public class PurchaseController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PatchMapping(value = "/{offerId}", params = {"dto", "removeFileUrl"})
+    @PostMapping(value = "/{offerId}", params = {"dto", "removeFileUrl"})
     public ResponseEntity<OfferDto> editOffer(@PathVariable Long offerId,
                                               @RequestPart("dto") EditOfferDto editOfferDto,
                                               @RequestPart(value = "file", required = false) List<MultipartFile> images,
@@ -110,7 +110,7 @@ public class PurchaseController {
         return new ResponseEntity<>(offer, HttpStatus.OK);
     }
 
-    @PatchMapping(value = "/{offerId}", params = {"dto"})
+    @PostMapping(value = "/{offerId}", params = {"dto"})
     public ResponseEntity<OfferDto> editOffer(@PathVariable Long offerId,
                                               @RequestPart("dto") EditOfferDto editOfferDto,
                                               @RequestPart(value = "file", required = false) List<MultipartFile> images,

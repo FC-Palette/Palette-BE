@@ -82,8 +82,8 @@ public class SecondhandController {
                 .collect(Collectors.toList());
     }
 
-    @PatchMapping(value = "/{productId}", params = {"dto", "removeFileUrl"})
-    public ResponseEntity<ProductDto> EditProduct(@PathVariable Long productId,
+    @PostMapping(value = "/{productId}", params = {"dto", "removeFileUrl"})
+    public ResponseEntity<ProductDto> editProduct(@PathVariable Long productId,
                                                   @RequestPart("dto") EditProductDto editProductDto,
                                                   @RequestPart(value = "file", required = false) List<MultipartFile> images,
                                                   @RequestPart("removeFileUrl") RemoveImageDto removeImageDto,
@@ -100,8 +100,8 @@ public class SecondhandController {
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
-    @PatchMapping(value = "/{productId}", params = {"dto"})
-    public ResponseEntity<ProductDto> EditProduct(@PathVariable Long productId,
+    @PostMapping(value = "/{productId}", params = {"dto"})
+    public ResponseEntity<ProductDto> editProduct(@PathVariable Long productId,
                                                   @RequestPart("dto") EditProductDto editProductDto,
                                                   @RequestPart(value = "file", required = false) List<MultipartFile> images,
                                                   @AuthenticationPrincipal CustomUserDetails userDetails) {
