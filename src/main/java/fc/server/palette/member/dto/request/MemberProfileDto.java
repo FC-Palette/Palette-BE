@@ -18,7 +18,7 @@ public class MemberProfileDto {
     private String nickname;
     private String bio;
     private String sex;
-    private String position;
-    private String job;
+    private String position = null;
+    private String job = null;
 
 }
