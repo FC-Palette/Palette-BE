@@ -23,7 +23,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -89,7 +88,7 @@ public class PurchaseController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping(value = "/{offerId}", params = {"dto", "removeFileUrl"})
+    @PostMapping(value = "/{offerId}", params = "removeImage=true")
     public ResponseEntity<OfferDto> editOffer(@PathVariable Long offerId,
                                               @RequestPart("dto") EditOfferDto editOfferDto,
                                               @RequestPart(value = "file", required = false) List<MultipartFile> images,
@@ -110,7 +109,7 @@ public class PurchaseController {
         return new ResponseEntity<>(offer, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/{offerId}", params = {"dto"})
+    @PostMapping(value = "/{offerId}")
     public ResponseEntity<OfferDto> editOffer(@PathVariable Long offerId,
                                               @RequestPart("dto") EditOfferDto editOfferDto,
                                               @RequestPart(value = "file", required = false) List<MultipartFile> images,
