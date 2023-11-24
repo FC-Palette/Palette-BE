@@ -82,7 +82,7 @@ public class SecondhandController {
                 .collect(Collectors.toList());
     }
 
-    @PostMapping(value = "/{productId}", params = {"dto", "removeFileUrl"})
+    @PostMapping(value = "/{productId}", params = "removeImage=true")
     public ResponseEntity<ProductDto> editProduct(@PathVariable Long productId,
                                                   @RequestPart("dto") EditProductDto editProductDto,
                                                   @RequestPart(value = "file", required = false) List<MultipartFile> images,
@@ -100,7 +100,7 @@ public class SecondhandController {
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/{productId}", params = {"dto"})
+    @PostMapping(value = "/{productId}")
     public ResponseEntity<ProductDto> editProduct(@PathVariable Long productId,
                                                   @RequestPart("dto") EditProductDto editProductDto,
                                                   @RequestPart(value = "file", required = false) List<MultipartFile> images,
